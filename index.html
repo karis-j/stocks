@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 10px;
+        background-color: #f9f9f9;
+      }
+
+      h1 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 8px;
+        color: #333;
+      }
+
+      h1 svg {
+        margin-right: 8px;
+        width: 26px;
+        height: 26px;
+      }
+
+      p.description {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 18px;
+      }
+
+      .calculator {
+        background: white;
+        padding: 16px;
+        margin: 12px auto;
+        border-radius: 10px;
+        max-width: 400px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      }
+
+      label {
+        display: block;
+        margin: 6px 0 3px;
+        font-weight: bold;
+        font-size: 13px;
+        color: #333;
+        text-align: left;
+      }
+
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+      input[type="range"] {
+        padding: 0;
+      }
+
+      button {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background: #45a049;
+      }
+
+      .result {
+        margin-top: 12px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .ad-section {
+        margin: 18px auto;
+        max-width: 400px;
+      }
+
+      .ad-box {
+        background: #eee;
+        border: 1px dashed #aaa;
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 6px;
+        text-align: center;
+        font-size: 13px;
+        color: #444;
+      }
+
+      .example {
+        font-size: 12px;
+        color: #666;
+        margin-top: 12px;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Heading with bar chart -->
+    <h1>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="#4CAF50" viewBox="0 0 24 24">
+        <path d="M5 9h2v10H5zM11 5h2v14h-2zM17 13h2v6h-2z"/>
+      </svg>
+      Simple Stock Averaging Tools
+    </h1>
+    <p class="description">Easily calculate your stock averaging forward or reverse. Try both tools below to plan your trades smarter.</p>
+
+    <!-- First Ad Section -->
+    <div class="ad-section">
+      <div class="ad-box">[Your Ad Banner or Affiliate Link 1]</div>
+    </div>
+
+    <!-- Forward Averaging Calculator -->
+    <div class="calculator">
+      <h2>Stock Averaging Calculator</h2>
+      <label for="shares">Shares Owned</label>
+      <input type="number" id="shares" placeholder="e.g. 100">
+      <label for="avgPrice">Average Price</label>
+      <input type="number" id="avgPrice" placeholder="e.g. 10.50">
+      <label for="newShares">New Shares to Buy</label>
+      <input type="number" id="newShares" placeholder="e.g. 50">
+      <label for="newPrice">New Purchase Price</label>
+      <input type="number" id="newPrice" placeholder="e.g. 12.00">
+      <button onclick="calculateForward()">Calculate</button>
+      <div class="result" id="forwardResult"></div>
+    </div>
+
+    <!-- Second Ad Section -->
+    <div class="ad-section">
+      <div class="ad-box">[Your Ad Banner or Affiliate Link 2]</div>
+    </div>
+
+    <!-- Reverse Averaging Calculator -->
+    <div class="calculator">
+      <h2>Reverse Stock Averaging Tool</h2>
+      <label for="revShares">Current Shares Owned</label>
+      <input type="number" id="revShares" placeholder="e.g. 52">
+      <label for="revAvgPrice">Current Avg Price</label>
+      <input type="number" id="revAvgPrice" placeholder="e.g. 13.54">
+      <label for="revCurrentPrice">Current Market Price</label>
+      <input type="number" id="revCurrentPrice" placeholder="e.g. 12.65">
+      <label for="revTarget">Target Avg Price</label>
+      <input type="number" id="revTarget" placeholder="e.g. 13.00">
+
+      <!-- What-if slider -->
+      <label for="targetSlider">Adjust Target Avg Price ($):</label>
+      <input type="range" id="targetSlider" min="0" max="50" step="0.01" value="13.00" 
+             oninput="updateSliderValue(this.value)" style="width:100%; margin-bottom:8px;">
+      <div id="sliderValue" style="margin-bottom:12px; font-size:13px; color:#444;">Current: $13.00</div>
+
+      <button onclick="calculateReverse()">Calculate</button>
+      <div class="result" id="reverseResult"></div>
+      <div class="example">
+        Example: You have 52 UNG shares at $13.54. Current price = $12.65. If your goal is to average down to $13, the tool tells you exactly how many shares to buy at $12.65.
+      </div>
+    </div>
+
+    <!-- Third Ad Section (bottom) -->
+    <div class="ad-section">
+      <div class="ad-box">[Your Ad Banner or Affiliate Link 3]</div>
+    </div>
+
+    <script>
+      // Forward calculator
+      function calculateForward() {
+        let shares = parseFloat(document.getElementById('shares').value) || 0;
+        let avgPrice = parseFloat(document.getElementById('avgPrice').value) || 0;
+        let newShares = parseFloat(document.getElementById('newShares').value) || 0;
+        let newPrice = parseFloat(document.getElementById('newPrice').value) || 0;
+
+        let totalCost = (shares * avgPrice) + (newShares * newPrice);
+        let totalShares = shares + newShares;
+        let newAvg = totalCost / totalShares;
+
+        document.getElementById('forwardResult').innerText =
+          "New Average Price: $" + newAvg.toFixed(2);
+      }
+
+      // Reverse calculator
+      function calculateReverse() {
+        let shares = parseFloat(document.getElementById('revShares').value) || 0;
+        let avgPrice = parseFloat(document.getElementById('revAvgPrice').value) || 0;
+        let currentPrice = parseFloat(document.getElementById('revCurrentPrice').value) || 0;
+        let target = parseFloat(document.getElementById('revTarget').value) || 0;
+
+        let numerator = (shares * avgPrice) - (target * shares);
+        let denominator = (target - currentPrice);
+
+        if (denominator === 0) {
+          document.getElementById('reverseResult').innerText =
+            "Target equals current price — cannot calculate.";
+          return;
+        }
+
+        let x = numerator / denominator;
+
+        if (x < 0) {
+          document.getElementById('reverseResult').innerText =
+            "Target not achievable at this price.";
+        } else {
+          let cost = x * currentPrice;
+          document.getElementById('reverseResult').innerText =
+            "You need to buy " + x.toFixed(2) + " shares (~$" + cost.toFixed(2) + ")";
+        }
+      }
+
+      // Slider function
+      function updateSliderValue(val) {
+        document.getElementById('sliderValue').innerText = "Current: $" + parseFloat(val).toFixed(2);
+        document.getElementById('revTarget').value = val;
+        calculateReverse();
+      }
+    </script>
+  </body>
+</html>
